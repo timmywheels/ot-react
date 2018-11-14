@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import scriptLoader from 'react-async-script-loader';
+import KEYS from '../config/keys';
+
 class Map extends Component{
 	constructor(props) {
 		super(props);
@@ -28,5 +30,5 @@ class Map extends Component{
 }
 
 export default scriptLoader(
-	["https://maps.googleapis.com/maps/api/js?key=AIzaSyA1FDkAOyxq7_iJDpCrt9MU56gl9oZ14p0"]
+	[`https://maps.googleapis.com/maps/api/js?key=${KEYS.GOOGLE_MAPS_API}`]
 )(Map)

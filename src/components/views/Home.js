@@ -80,7 +80,8 @@ const styles = theme => ({
 	},
 	content: {
 		flexGrow: 1,
-		padding: theme.spacing.unit * 3,
+		// padding: theme.spacing.unit * 3,
+		padding: 0
 	},
 });
 
@@ -121,7 +122,7 @@ class MiniDrawer extends React.Component {
 							<MenuIcon />
 						</IconButton>
 						<Typography variant="h6" color="inherit" noWrap>
-							Mini variant drawer
+							Our Travels
 						</Typography>
 					</Toolbar>
 				</AppBar>
