@@ -4,3 +4,4 @@
 * Create ability to add dates to spot
 * Create ability to attach photos to spot
 * Create ability to find new spots
+* Create ability to rate spots
