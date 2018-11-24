@@ -122,7 +122,7 @@ class MiniDrawer extends React.Component {
 							<MenuIcon />
 						</IconButton>
 						<Typography variant="h6" color="inherit" noWrap>
-							Our Travels
+							Google Maps API
 						</Typography>
 					</Toolbar>
 				</AppBar>
