@@ -168,6 +168,7 @@ class MiniDrawer extends React.Component {
 					<div className={classes.toolbar} />
 					<Map/>
 				</main>
+				<ul id={'results'} />
 			</div>
 		);
 	}
