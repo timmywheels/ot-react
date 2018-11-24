@@ -14,6 +14,7 @@ let latitude;
 let longitude;
 let markers = [];
 let request;
+let place;
 
 const styles = theme => ({
 	textField: {
@@ -39,52 +40,71 @@ class Map extends Component{
 		value: ''
 	};
 
+	static async createMarker(locationObj){
+		const marker = await new window.google.maps.Marker({ position: locationObj, map: map });
+		markers.push(marker);
+	}
+
+	async renderMapMarkers() {
+		await markers.map(marker => {
+			return new window.google.maps.Marker({ position: marker, map: map });
+		});
+	}
+
 	onSubmit = async (e) => {
 		e.preventDefault();
 
-		const place = await autocomplete.getPlace();
+		place = await autocomplete.getPlace();
 
-		alert(`
+		await alert(`
 			${place.name}
 			${place.formatted_address}
+			${place.formatted_phone_number}
 			${place.website}
 			Average Stars: ${place.rating}
 			`);
 
-		// latitude = window.place.geometry.location.lat();
-		// longitude = window.place.geometry.location.lng();
+
+		latitude = await parseFloat(place.geometry.location.lat());
+		longitude = await parseFloat(place.geometry.location.lng());
+		let markerLocation = { lat: latitude, lng: longitude}
+		// console.log('lat:', latitude, 'lng:', longitude)
+		await Map.createMarker(markerLocation)
+
+		console.log('markers.length:',markers.length)
+
+		this.renderMapMarkers();
+
 
 		// const mapMarker = new window.google.maps.Marker({
 		// 	map: map,
 		// 	// icon: image,
-		// 	title: window.place.name,
-		// 	position: window.place.geometry.location
+		// 	title: place.name,
+		// 	position: {latitude, longitude}
 		// });
 		// this.setState({ value: this.props.onChange });
 		// markers.push(mapMarker);
-		console.log(this.state.value)
-		console.log('auto:', autocomplete.getPlace())
-		console.log('service:', service);
+		// console.log(this.state.value)
+		// console.log('auto:', autocomplete.getPlace())
+		// console.log('service:', service);
 
 	}
 
-	static createMarker(result){
-		return new window.google.maps.Marker({ position: result, map: map });
-	}
 
-	static callback(results, status) {
-		if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-			for (let i = 0; i < results.length; i++) {
-				let place = results[i];
-				console.log('place:', place);
-				this.createMarker(results[i]);
-			}
-		}
-	}
+
+	// static callback(results, status) {
+	// 	if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+	// 		for (let i = 0; i < results.length; i++) {
+	// 			let place = results[i];
+	// 			console.log('place:', place);
+	// 			this.createMarker(results[i]);
+	// 		}
+	// 	}
+	// }
 
 
 
-	componentWillReceiveProps({isScriptLoadSucceed}){
+	async componentWillReceiveProps({isScriptLoadSucceed}){
 		if (isScriptLoadSucceed) {
 
 			map = new window.google.maps.Map(document.getElementById('map'), {
@@ -95,19 +115,25 @@ class Map extends Component{
 			console.log('map:', map);
 
 			const home = {lat: 41.900230, lng: -71.321290}
-			markers = [{ home }, {lat: 42.390991, lng: -71.579727}]
+			markers = await [{ ...home }, {lat: 42.390991, lng: -71.579727}]
 
-			markers.map(marker => {
-				return new window.google.maps.Marker({ position: marker, map: map });
-			});
+			this.renderMapMarkers();
+
+			// markers = await markers.map(marker => {
+			// 	return new window.google.maps.Marker({ position: marker, map: map });
+			// });
+
+			for (let i in markers) {
+				console.log('markers:', markers[i]);
+			}
 
 
-			let defaultBounds = new window.google.maps.LatLngBounds(
-				new window.google.maps.LatLng(41.900230, -71.321290)
-			);
+			// let defaultBounds = new window.google.maps.LatLngBounds(
+			// 	new window.google.maps.LatLng(41.900230, -71.321290)
+			// );
 
 			let options = {
-				bounds: defaultBounds,
+				// bounds: defaultBounds,
 				types: ['establishment'],
 				componentRestrictions: {country: 'us'}
 			};
@@ -119,11 +145,6 @@ class Map extends Component{
 
 			service = new window.google.maps.places.PlacesService(map);
 			service.findPlaceFromQuery(request, this.callback);
-
-
-
-			// console.log('serviceee:', service)
-
 			autocomplete = new window.google.maps.places.Autocomplete(document.getElementById('searchBox'), options);
 
 		}
@@ -162,29 +183,3 @@ class Map extends Component{
 export default scriptLoader(
 	[`https://maps.googleapis.com/maps/api/js?key=${KEYS.GOOGLE_MAPS_API}&libraries=places`]
 )(Map)
-
-
-
-
-// Create a new session token.
-
-// let displaySuggestions = function(predictions, status) {
-// 	if (status !== window.google.maps.places.PlacesServiceStatus.OK) {
-// 		alert(status);
-// 		return;
-// 	}
-//
-// 	predictions.forEach(function (prediction) {
-// 		let li = document.createElement('li');
-// 		li.appendChild(document.createTextNode(prediction.description));
-// 		document.getElementById('results').appendChild(li);
-// 	});
-// }
-//
-// var sessionToken = new window.google.maps.places.AutocompleteSessionToken();
-//
-// autocomplete = new window.google.maps.places.AutocompleteService();
-// autocomplete.getPlacePredictions({
-// 	input: this.state.value,
-// 	sessionToken
-// }, displaySuggestions)
