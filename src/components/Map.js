@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import scriptLoader from 'react-async-script-loader';
+import fire from '../firebase';
 // import { GoogleApiWrapper, InfoWindow, Map, Marker } from 'google-maps-react';
 // import { Typography } from 'material-ui/styles';
 import KEYS from '../config/keys';
@@ -43,6 +44,9 @@ class Map extends Component{
 	static async createMarker(locationObj){
 		const marker = await new window.google.maps.Marker({ position: locationObj, map: map });
 		markers.push(marker);
+
+		// push lat & lng obj to firebase
+		fire.database().ref('placesVisited').push(locationObj);
 	}
 
 	async renderMapMarkers() {
@@ -70,6 +74,8 @@ class Map extends Component{
 		let markerLocation = { lat: latitude, lng: longitude}
 		// console.log('lat:', latitude, 'lng:', longitude)
 		await Map.createMarker(markerLocation)
+
+
 
 		console.log('markers.length:',markers.length)
 
@@ -128,12 +134,12 @@ class Map extends Component{
 			}
 
 
-			// let defaultBounds = new window.google.maps.LatLngBounds(
-			// 	new window.google.maps.LatLng(41.900230, -71.321290)
-			// );
+			let defaultBounds = new window.google.maps.LatLngBounds(
+				new window.google.maps.LatLng(41.900230, -71.321290)
+			);
 
 			let options = {
-				// bounds: defaultBounds,
+				bounds: defaultBounds,
 				types: ['establishment'],
 				componentRestrictions: {country: 'us'}
 			};
@@ -146,6 +152,16 @@ class Map extends Component{
 			service = new window.google.maps.places.PlacesService(map);
 			service.findPlaceFromQuery(request, this.callback);
 			autocomplete = new window.google.maps.places.Autocomplete(document.getElementById('searchBox'), options);
+
+			let placesVisitedRef = await fire.database().ref('placesVisited');
+			await placesVisitedRef.on('value', function(snapshot) {
+				snapshot.forEach(function(childSnapshot) {
+					let childData = childSnapshot.val();
+					markers.push(childData)
+					console.log('db:', childData)
+				});
+			});
+
 
 		}
 		else{
