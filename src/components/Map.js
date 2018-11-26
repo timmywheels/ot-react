@@ -169,7 +169,7 @@ class Map extends Component{
 						}}
 					/>
 					<Button type="submit" variant="contained" color="primary" className={styles.button}>
-						Search >
+						Search
 					</Button>
 				</form>
 			</div>
