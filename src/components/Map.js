@@ -160,7 +160,7 @@ class Map extends Component{
 						id="searchBox"
 						label="Search Places"
 						style={{margin: 8}}
-						placeholder="Less Than Greater Than, Hudson, MA"
+						placeholder="Less Than Greater Than, Hudson MA"
 						fullWidth
 						margin="normal"
 						variant="filled"
