@@ -48,7 +48,7 @@ class Map extends Component{
 		// push lat & lng obj to firebase
 		fire.database().ref('placesVisited').push(locationObj);
 		// Map.renderMapMarkers();
-		// console.log('markersss:', markers)
+		// console.log('markers:', markers)
 	}
 
 	// static async renderMapMarkers() {
